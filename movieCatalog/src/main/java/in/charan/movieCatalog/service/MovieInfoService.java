@@ -1,4 +1,4 @@
-package in.charan.movieCatalog.client;
+package in.charan.movieCatalog.service;
 
 import in.charan.movieCatalog.model.request.movieinfoservice.MovieInfo;
 import in.charan.movieCatalog.model.response.MovieRating;
@@ -8,14 +8,15 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class MovieInfoService {
 
-    public ArrayList<MovieRating> getMovieInfo(ArrayList<Rating> userRatedMovies) {
+    public List<MovieRating> getMovieInfo(ArrayList<Rating> userRatedMovies) {
         int isZero = new Random().nextInt(100) % 2;
 
-        ArrayList<MovieRating> movieInfoWithRating = new ArrayList<>();
+        List<MovieRating> movieInfoWithRating = new ArrayList<>();
         if (isZero == 0) {
             RestTemplate restTemplate = BeanUtil.getBeanUtil(RestTemplate.class);
             for (Rating eachRatedMovie : userRatedMovies) {

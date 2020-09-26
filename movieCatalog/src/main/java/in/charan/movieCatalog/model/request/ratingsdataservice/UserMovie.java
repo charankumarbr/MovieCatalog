@@ -1,17 +1,17 @@
 package in.charan.movieCatalog.model.request.ratingsdataservice;
 
-public class Rating {
+public class UserMovie {
 
     private String movieId;
 
     private int rating;
 
-    public Rating(String movieId, int rating) {
+    public UserMovie(String movieId, int rating) {
         this.movieId = movieId;
         this.rating = rating;
     }
 
-    public Rating() {
+    public UserMovie() {
 
     }
 

@@ -1,6 +1,6 @@
 package in.charan.movieInfo.model;
 
-public class Movie {
+public class MovieInfo {
 
     private String movieId;
 
@@ -10,10 +10,10 @@ public class Movie {
 
     private String releaseDate;
 
-    public Movie() {
+    public MovieInfo() {
     }
 
-    public Movie(String movieId, String title, String description, String releaseDate) {
+    public MovieInfo(String movieId, String title, String description, String releaseDate) {
         this.movieId = movieId;
         this.title = title;
         this.description = description;

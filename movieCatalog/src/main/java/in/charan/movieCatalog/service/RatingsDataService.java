@@ -1,4 +1,4 @@
-package in.charan.movieCatalog.client;
+package in.charan.movieCatalog.service;
 
 import in.charan.movieCatalog.model.request.ratingsdataservice.UserMovieRating;
 import in.charan.movieCatalog.util.BeanUtil;
