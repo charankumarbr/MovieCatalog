@@ -5,7 +5,7 @@ import in.charan.ratingsData.util.RatingsUtil;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class UserMovieRating {
+public class UserMovieRating extends CustomException {
 
     private String userId;
 
@@ -14,11 +14,13 @@ public class UserMovieRating {
     private int maxRating = 10;
 
     public UserMovieRating(String userId, ArrayList<Rating> moviesRated) {
+        super();
         this.userId = userId;
         this.moviesRated = moviesRated;
     }
 
     public UserMovieRating() {
+        super();
     }
 
     public ArrayList<Rating> getMoviesRated() {
@@ -37,12 +39,12 @@ public class UserMovieRating {
         this.userId = userId;
     }
 
-    public void prepareUserRatedMovieList(Random random) {
+    public void prepareUserRatedMovieList(Random random) throws Exception {
         ArrayList<Rating> moviesRated = new ArrayList<>();
         int moviesCount = RatingsUtil.getMovieCount(random);
         for (int index = 0; index < moviesCount; index++) {
             Rating movieRating = new Rating();
-            movieRating.setMovieId(String.valueOf(index));
+            movieRating.setMovieId(String.valueOf(index + 1));
             movieRating.setRating(RatingsUtil.getMovieRating(random));
             moviesRated.add(movieRating);
         }

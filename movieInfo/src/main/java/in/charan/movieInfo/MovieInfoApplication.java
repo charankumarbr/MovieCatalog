@@ -1,8 +1,10 @@
 package in.charan.movieInfo;
 
+import in.charan.movieInfo.repo.MovieInfoRepo;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 @EnableEurekaClient
@@ -10,6 +12,11 @@ public class MovieInfoApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(MovieInfoApplication.class, args);
+	}
+
+	@Bean
+	public MovieInfoRepo providesMovieInfoRepo() {
+		return new MovieInfoRepo();
 	}
 
 }

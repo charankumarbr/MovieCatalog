@@ -1,10 +1,17 @@
 package in.charan.movieCatalog.controller;
 
-import in.charan.movieCatalog.client.MovieInfoService;
-import in.charan.movieCatalog.client.RatingsDataService;
-import in.charan.movieCatalog.model.response.MovieCatalog;
+import com.netflix.discovery.EurekaClient;
+import com.netflix.discovery.shared.Application;
+import com.netflix.discovery.shared.Applications;
 import in.charan.movieCatalog.model.response.MovieRating;
+import in.charan.movieCatalog.service.MovieCatalogService;
+import in.charan.movieCatalog.service.MovieInfoService;
+import in.charan.movieCatalog.service.RatingsDataService;
 import in.charan.movieCatalog.model.request.ratingsdataservice.UserMovieRating;
+import in.charan.movieCatalog.model.response.MovieCatalog;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,8 +22,14 @@ import java.util.ArrayList;
 @RequestMapping("/catalog")
 public class CatalogController {
 
+    @Autowired
+    private MovieCatalogService movieCatalogService;
+
+    @Autowired
+    public EurekaClient eurekaClient;
+
     @RequestMapping("/{userId}")
-    public MovieCatalog getMovieCatalog(@PathVariable("userId") String userId) {
+    public ResponseEntity<Object> getMovieCatalog(@PathVariable("userId") String userId) {
         //UserMovieRating userRatedMovies = restTemplate.getForObject("http://localhost:9003/ratings/users/" + userId, UserMovieRating.class);
         //UserMovieRating userRatedMovies = restTemplate.getForObject("http://ratingsdataservice/ratings/users/" + userId, UserMovieRating.class);
         /*UserMovieRating userRatedMovies = builder
@@ -28,15 +41,6 @@ public class CatalogController {
                 .bodyToMono(UserMovieRating.class)
                 .block();*/
 
-        UserMovieRating userRatedMovies = new RatingsDataService().getUserRatedMovies(userId);
-
-        MovieCatalog movieCatalog = new MovieCatalog();
-        movieCatalog.setUserId(userId);
-        movieCatalog.setMaxRating(userRatedMovies.getMaxRating());
-
-        ArrayList<MovieRating> moviesRated = new MovieInfoService().getMovieInfo(userRatedMovies.getMoviesRated());
-        movieCatalog.setMoviesRated(moviesRated);
-
-        return movieCatalog;
+        return movieCatalogService.getMovieCatalogForUser(userId);
     }
 }

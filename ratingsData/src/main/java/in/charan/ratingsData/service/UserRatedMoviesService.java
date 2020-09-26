@@ -24,12 +24,13 @@ public class UserRatedMoviesService {
 
         try {
             UserMovieRating userMovieRating = userRatedMoviesRepo.getUserRatedMovies(userId);
+            userMovieRating.setApiStatusCode(HttpStatus.OK.value());
             return new ResponseEntity<>(userMovieRating, HttpStatus.OK);
 
         } catch (Exception e) {
             loggerUtils.logException(e);
             return new ResponseEntity<>(new CustomException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value()),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
+                    HttpStatus.OK);
         }
     }
 

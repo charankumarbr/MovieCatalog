@@ -1,5 +1,6 @@
 package in.charan.ratingsData;
 
+import in.charan.ratingsData.repo.UserRatedMoviesRepo;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
@@ -19,6 +20,11 @@ public class RatingsDataApplication {
 	@Bean
 	public Random getRandom() {
 		return new Random();
+	}
+
+	@Bean
+	public UserRatedMoviesRepo providesUserRatedMoviesRepo() {
+		return new UserRatedMoviesRepo(getRandom());
 	}
 
 }

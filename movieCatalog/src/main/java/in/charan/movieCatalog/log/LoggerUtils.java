@@ -1,8 +1,6 @@
-package in.charan.ratingsData.log;
+package in.charan.movieCatalog.log;
 
 import org.springframework.stereotype.Service;
-
-import java.util.logging.Logger;
 
 @Service
 public class LoggerUtils {

@@ -1,6 +1,6 @@
 package in.charan.movieInfo.model;
 
-public class MovieInfo {
+public class MovieInfo extends CustomException {
 
     private String movieId;
 

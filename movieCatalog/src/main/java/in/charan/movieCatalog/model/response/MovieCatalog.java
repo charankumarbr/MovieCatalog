@@ -1,12 +1,12 @@
 package in.charan.movieCatalog.model.response;
 
-import java.util.ArrayList;
+import java.util.List;
 
-public class MovieCatalog {
+public class MovieCatalog extends CustomException {
 
     private String userId;
 
-    private ArrayList<MovieRating> moviesRated;
+    private List<MovieRating> moviesRated;
 
     private int maxRating;
 
@@ -21,11 +21,11 @@ public class MovieCatalog {
         this.userId = userId;
     }
 
-    public ArrayList<MovieRating> getMoviesRated() {
+    public List<MovieRating> getMoviesRated() {
         return moviesRated;
     }
 
-    public void setMoviesRated(ArrayList<MovieRating> moviesRated) {
+    public void setMoviesRated(List<MovieRating> moviesRated) {
         this.moviesRated = moviesRated;
     }
 

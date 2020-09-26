@@ -1,14 +1,17 @@
-package in.charan.ratingsData.model;
+package in.charan.movieCatalog.model.response;
 
 public class CustomException {
 
     private String exceptionMessage;
 
-    private int code;
+    private int apiStatusCode;
 
-    public CustomException(String exceptionMessage, int code) {
+    public CustomException() {
+    }
+
+    public CustomException(String exceptionMessage, int apiStatusCode) {
         this.exceptionMessage = exceptionMessage;
-        this.code = code;
+        this.apiStatusCode = apiStatusCode;
     }
 
     public String getExceptionMessage() {
@@ -19,11 +22,11 @@ public class CustomException {
         this.exceptionMessage = exceptionMessage;
     }
 
-    public int getCode() {
-        return code;
+    public int getApiStatusCode() {
+        return apiStatusCode;
     }
 
-    public void setCode(int code) {
-        this.code = code;
+    public void setApiStatusCode(int apiStatusCode) {
+        this.apiStatusCode = apiStatusCode;
     }
 }

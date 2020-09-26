@@ -1,6 +1,9 @@
 package in.charan.movieInfo.controller;
 
-import in.charan.movieInfo.model.Movie;
+import in.charan.movieInfo.model.MovieInfo;
+import in.charan.movieInfo.service.movieinfo.MovieInfoService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,8 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/movieInfo")
 public class MovieInfoController {
 
+    @Autowired
+    private MovieInfoService movieInfoService;
+
     @RequestMapping("/{movieId}")
-    public Movie getMovieInfo(@PathVariable("movieId") String movieId) {
-        return new Movie(movieId, "Movie Title goes here", "Movie desc goes here", "August 2016");
+    public ResponseEntity<Object> getMovieInfo(@PathVariable("movieId") String movieId) {
+        return movieInfoService.getMovieInfo(movieId);
     }
 }

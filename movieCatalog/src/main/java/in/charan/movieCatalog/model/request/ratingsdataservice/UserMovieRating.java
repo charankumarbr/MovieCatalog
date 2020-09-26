@@ -1,28 +1,32 @@
 package in.charan.movieCatalog.model.request.ratingsdataservice;
 
+import in.charan.movieCatalog.model.response.CustomException;
+
 import java.util.ArrayList;
 
-public class UserMovieRating {
+public class UserMovieRating extends CustomException {
 
     private String userId;
 
-    private ArrayList<Rating> moviesRated;
+    private ArrayList<UserMovie> moviesRated;
 
     private int maxRating = 10;
 
-    public UserMovieRating(String userId, ArrayList<Rating> moviesRated) {
+    public UserMovieRating(String userId, ArrayList<UserMovie> moviesRated) {
+        super();
         this.userId = userId;
         this.moviesRated = moviesRated;
     }
 
     public UserMovieRating() {
+        super();
     }
 
-    public ArrayList<Rating> getMoviesRated() {
+    public ArrayList<UserMovie> getMoviesRated() {
         return moviesRated;
     }
 
-    public void setMoviesRated(ArrayList<Rating> moviesRated) {
+    public void setMoviesRated(ArrayList<UserMovie> moviesRated) {
         this.moviesRated = moviesRated;
     }
 
