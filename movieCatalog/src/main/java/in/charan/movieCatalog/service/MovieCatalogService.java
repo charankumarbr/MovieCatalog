@@ -1,10 +1,9 @@
 package in.charan.movieCatalog.service;
 
-import com.netflix.discovery.EurekaClient;
-import com.netflix.discovery.shared.Application;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import in.charan.movieCatalog.log.LoggerUtils;
+import in.charan.movieCatalog.model.request.ratingsdataservice.UserMovie;
 import in.charan.movieCatalog.model.request.ratingsdataservice.UserMovieRating;
-import in.charan.movieCatalog.model.response.CustomException;
 import in.charan.movieCatalog.model.response.MovieCatalog;
 import in.charan.movieCatalog.model.response.MovieRating;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -28,36 +28,77 @@ public class MovieCatalogService {
 
     public ResponseEntity<Object> getMovieCatalogForUser(String userId) {
 
+        UserMovieRating userRatedMovies = getUserRatedMovies(userId);
+
+        MovieCatalog movieCatalog;
+        if (userRatedMovies.getApiStatusCode() == HttpStatus.OK.value() && userRatedMovies.getMoviesRated() != null
+                && !userRatedMovies.getMoviesRated().isEmpty()) {
+            movieCatalog = getMovieInfo(userRatedMovies);
+
+        } else {
+            movieCatalog = new MovieCatalog();
+            movieCatalog.setExceptionMessage(userRatedMovies.getExceptionMessage());
+            movieCatalog.setApiStatusCode(userRatedMovies.getApiStatusCode());
+        }
+        return new ResponseEntity<>(movieCatalog, HttpStatus.OK);
+    }
+
+    @HystrixCommand(fallbackMethod = "getFallbackUserRatedMovies")
+    private UserMovieRating getUserRatedMovies(String userId) {
+        UserMovieRating userMovieRating;
         try {
-            UserMovieRating userRatedMovies = ratingsDataService.getUserRatedMovies(userId);
+            userMovieRating = ratingsDataService.getUserRatedMovies(userId);
 
-            if (userRatedMovies == null) {
-                return new ResponseEntity<>(new CustomException("SERVICE NOT AVAILABLE", 503), HttpStatus.SERVICE_UNAVAILABLE);
+            if (userMovieRating == null) {
+                userMovieRating = getFallbackUserRatedMovies();
 
-            } else if (userRatedMovies.getApiStatusCode() != 0 && userRatedMovies.getApiStatusCode() != HttpStatus.OK.value()) {
-                return new ResponseEntity<>(new CustomException(userRatedMovies.getExceptionMessage(), userRatedMovies.getApiStatusCode()),
-                        HttpStatus.resolve(userRatedMovies.getApiStatusCode()));
-
-            } else {
-                MovieCatalog movieCatalog = new MovieCatalog();
-                movieCatalog.setUserId(userId);
-                movieCatalog.setMaxRating(userRatedMovies.getMaxRating());
-
-                if (userRatedMovies.getMoviesRated() != null && !userRatedMovies.getMoviesRated().isEmpty()) {
-                    List<MovieRating> moviesRated = movieInfoService.getMovieInfo(userRatedMovies.getMoviesRated());
-                    if (moviesRated != null && !moviesRated.isEmpty()) {
-                        movieCatalog.setMoviesRated(moviesRated);
-                    }
-                }
-
-                movieCatalog.setApiStatusCode(userRatedMovies.getApiStatusCode());
-                return new ResponseEntity<>(movieCatalog, HttpStatus.OK);
+            } else if (userMovieRating.getApiStatusCode() != 0 && userMovieRating.getApiStatusCode() != HttpStatus.OK.value()) {
+                userMovieRating.setExceptionMessage(userMovieRating.getExceptionMessage());
+                userMovieRating.setApiStatusCode(userMovieRating.getApiStatusCode());
             }
 
         } catch (Exception e) {
             loggerUtils.logException(e);
-            return new ResponseEntity<>(new CustomException("SOMETHING WENT WRONG!", HttpStatus.INTERNAL_SERVER_ERROR.value()),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
+            return getFallbackUserRatedMovies();
         }
+
+        return userMovieRating;
+    }
+
+    private UserMovieRating getFallbackUserRatedMovies() {
+        UserMovieRating userMovieRating = new UserMovieRating();
+        userMovieRating.setExceptionMessage("SERVICE NOT AVAILABLE - fallback");
+        userMovieRating.setApiStatusCode(503);
+        return userMovieRating;
+    }
+
+    @HystrixCommand(fallbackMethod = "getFallbackMovieInfo")
+    private MovieCatalog getMovieInfo(UserMovieRating userMovieRating) {
+        ArrayList<UserMovie> moviesRated = userMovieRating.getMoviesRated();
+        MovieCatalog movieCatalog = new MovieCatalog();
+
+        if (moviesRated != null && !moviesRated.isEmpty()) {
+            try {
+                List<MovieRating> movieInfoRated = movieInfoService.getMovieInfo(moviesRated);
+                if (moviesRated != null && !moviesRated.isEmpty()) {
+                    movieCatalog.setMoviesRated(movieInfoRated);
+                }
+            } catch (Exception e) {
+                loggerUtils.logException(e);
+                return getFallbackMovieInfo();
+            }
+        }
+
+        movieCatalog.setUserId(userMovieRating.getUserId());
+        movieCatalog.setMaxRating(userMovieRating.getMaxRating());
+        movieCatalog.setApiStatusCode(userMovieRating.getApiStatusCode());
+        return movieCatalog;
+    }
+
+    private MovieCatalog getFallbackMovieInfo() {
+        MovieCatalog movieCatalog = new MovieCatalog();
+        movieCatalog.setExceptionMessage("SERVICE NOT AVAILABLE - fallback");
+        movieCatalog.setApiStatusCode(503);
+        return movieCatalog;
     }
 }
