@@ -44,7 +44,7 @@ public class UserMovieRating extends CustomException {
         int moviesCount = RatingsUtil.getMovieCount(random);
         for (int index = 0; index < moviesCount; index++) {
             Rating movieRating = new Rating();
-            movieRating.setMovieId(String.valueOf(index + 1));
+            movieRating.setMovieId(String.valueOf((index + 1) * 100));
             movieRating.setRating(RatingsUtil.getMovieRating(random));
             moviesRated.add(movieRating);
         }

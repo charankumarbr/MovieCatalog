@@ -18,8 +18,14 @@ public class MovieInfoServiceImpl implements MovieInfoService {
     public ResponseEntity<Object> getMovieInfo(String movieId) {
         try {
             MovieInfo movieInfo = movieInfoRepo.getMovieInfo(movieId);
-            movieInfo.setApiStatusCode(HttpStatus.OK.value());
-            return new ResponseEntity<>(movieInfo, HttpStatus.OK);
+            if (movieInfo == null) {
+                return new ResponseEntity<>(new CustomException("Unable to fetch information.", HttpStatus.INTERNAL_SERVER_ERROR.value()),
+                        HttpStatus.INTERNAL_SERVER_ERROR);
+
+            } else {
+                movieInfo.setApiStatusCode(HttpStatus.OK.value());
+                return new ResponseEntity<>(movieInfo, HttpStatus.OK);
+            }
 
         } catch (Exception e) {
             return new ResponseEntity<>(new CustomException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value()),
